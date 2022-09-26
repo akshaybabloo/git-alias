@@ -1,0 +1,37 @@
+name: Go
+
+on:
+  release:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        go-version: [ 1.19 ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Build
+      shell: pwsh
+      run: | 
+        go build -v -ldflags="-s -w -X 'main.version=${{ github.ref_name }}" -o pretty-alias
+        $compress = @{
+          Path = "pretty-alias", "README.md", "LICENSE"
+          CompressionLevel = "Optimal"
+          DestinationPath = "git-alias-${{matrix.os}}-Go${{ matrix.go-version }}.zip"
+        }
+        Compress-Archive @compress
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: git-alias-${{matrix.os}}-Go${{ matrix.go-version }}
+        path: git-alias-${{matrix.os}}-Go${{ matrix.go-version }}.zip
