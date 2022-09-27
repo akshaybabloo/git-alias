@@ -42,7 +42,7 @@ jobs:
           }
         } else {
           go build -v -ldflags="-s -w -X 'main.version=$Env:GITHUB_REF_NAME'" -o git-alias
-          chmod +x git-alias
+          sudo chmod +x git-alias
           $compress = @{
             Path = "git-alias", "README.md", "LICENSE"
             CompressionLevel = "Optimal"
