@@ -15,6 +15,7 @@ import (
 var version = "dev"
 
 var SearchString string
+var Sort bool
 
 var RootCmd = &cobra.Command{
 	Use:   "git-alias [file] (default: ~/.gitconfig)",
@@ -74,7 +75,9 @@ var RootCmd = &cobra.Command{
 		t.SetColumnConfigs([]table.ColumnConfig{
 			{Name: "Command", WidthMax: 80},
 		})
-		t.SortBy([]table.SortBy{{Name: "Alias", Mode: table.Asc}})
+		if Sort {
+			t.SortBy([]table.SortBy{{Name: "Alias", Mode: table.Asc}})
+		}
 
 		t.Render()
 
@@ -85,6 +88,7 @@ var RootCmd = &cobra.Command{
 func main() {
 
 	RootCmd.PersistentFlags().StringVarP(&SearchString, "search", "s", "", "Search for aliases containing the given string")
+	RootCmd.PersistentFlags().BoolVar(&Sort, "sort", false, "Sort aliases by alias name")
 
 	RootCmd.Version = version
 	err := RootCmd.Execute()
