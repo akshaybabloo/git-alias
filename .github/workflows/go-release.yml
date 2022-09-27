@@ -1,6 +1,9 @@
-name: Go
+name: "Go Release"
 
 on:
+#  TODO: Change this to release
+  push:
+    branches: [ main ]
   release:
     branches: [ main ]
 
@@ -21,17 +24,34 @@ jobs:
         go-version: ${{ matrix.go-version }}
 
     - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Build for Production
       shell: pwsh
+      if: startsWith(github.ref, 'refs/tags/')
       run: | 
-        go build -v -ldflags="-s -w -X 'main.version=${{ github.ref_name }}" -o pretty-alias
-        $compress = @{
-          Path = "pretty-alias", "README.md", "LICENSE"
-          CompressionLevel = "Optimal"
-          DestinationPath = "git-alias-${{matrix.os}}-Go${{ matrix.go-version }}.zip"
+        if ("${{ matrix.os }}" -eq "windows-latest") {
+          go build -v -ldflags="-s -w -X 'main.version=$Env:GITHUB_REF_NAME'" -o git-alias.exe
+          $compress = @{
+            Path = "git-alias.exe", "README.md", "LICENSE"
+            CompressionLevel = "Optimal"
+            DestinationPath = "git-alias-${{ matrix.os }}-Go${{ matrix.go-version }}.zip"
+          }
+        } else {
+          go build -v -ldflags="-s -w -X 'main.version=$Env:GITHUB_REF_NAME'" -o git-alias
+          $compress = @{
+            Path = "git-alias", "README.md", "LICENSE"
+            CompressionLevel = "Optimal"
+            DestinationPath = "git-alias-${{ matrix.os }}-Go${{ matrix.go-version }}.zip"
+          }
         }
         Compress-Archive @compress
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload assets
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        name: git-alias-${{matrix.os}}-Go${{ matrix.go-version }}
-        path: git-alias-${{matrix.os}}-Go${{ matrix.go-version }}.zip
+        name: ${{ github.ref_name }}
+        files: git-alias-${{matrix.os}}-Go${{ matrix.go-version }}.zip
