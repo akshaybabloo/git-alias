@@ -34,7 +34,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       run: | 
         if ("${{ matrix.os }}" -eq "windows-latest") {
-          go build -v -ldflags="-s -w -X 'main.version=$Env:GITHUB_REF_NAME'" -o git-alias.exe
+          $Env:GOOS="windows";$Env:GOARCH="amd64"; go build -v -ldflags="-s -w -X 'main.version=$Env:GITHUB_REF_NAME'" -o git-alias.exe
           $compress = @{
             Path = "git-alias.exe", "README.md", "LICENSE"
             CompressionLevel = "Fastest"
