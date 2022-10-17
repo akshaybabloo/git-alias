@@ -1,4 +1,4 @@
-module github.com/akshaybabloo/pretty-alias
+module github.com/akshaybabloo/git-alias
 
 go 1.19
 
