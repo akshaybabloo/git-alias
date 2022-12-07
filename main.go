@@ -16,30 +16,26 @@ var version = "dev"
 
 var SearchString string
 var Sort bool
+var ConfigPath string
 
 var RootCmd = &cobra.Command{
 	Use:   "git-alias [file] (default: ~/.gitconfig)",
 	Short: "Over-engineered Git alias pretty printer",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			args = append(args, "~/.gitconfig")
-		}
 
-		var file = args[0]
-
-		if strings.HasPrefix(file, "~/") {
+		if strings.HasPrefix(ConfigPath, "~/") {
 			homeDir, _ := os.UserHomeDir()
-			file = filepath.Join(homeDir, file[2:])
+			ConfigPath = filepath.Join(homeDir, ConfigPath[2:])
 		}
-		_, err := os.Stat(file)
+		_, err := os.Stat(ConfigPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				return fmt.Errorf("error: %s file does not exist", file)
+				return fmt.Errorf("error: %s file does not exist", ConfigPath)
 			}
 			return fmt.Errorf("error: could not stat file")
 		}
 
-		config, err := ini.Load(file)
+		config, err := ini.Load(ConfigPath)
 		if err != nil {
 			return fmt.Errorf("error: could not load file")
 		}
@@ -88,6 +84,7 @@ var RootCmd = &cobra.Command{
 func main() {
 
 	RootCmd.PersistentFlags().StringVarP(&SearchString, "search", "s", "", "Search for aliases containing the given string")
+	RootCmd.PersistentFlags().StringVar(&ConfigPath, "config", "~/.gitconfig", "Path to git config file")
 	RootCmd.PersistentFlags().BoolVar(&Sort, "sort", false, "Sort aliases by alias name")
 
 	RootCmd.Version = version

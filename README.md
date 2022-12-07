@@ -4,7 +4,7 @@ This is literally the most over-engineered thing I've ever made. It prints out a
 
 ## Usage
 
-Add the built file to your path, and then run `git-alias`. It will print out a list of aliases, and the commands they run.
+Add the binary file to your path, and then run `git-alias`. It will print out a list of aliases, and the commands they run.
 
 ```bash
 $ git-alias
@@ -17,4 +17,10 @@ Search by using the `--search` or `-s` flag.
 
 ```bash
 $ git-alias -s "log"
+```
+
+Override the default Git configuration file by using the `--config` flag.
+
+```bash
+$ git-alias --config "~/.gitconfig"
 ```
