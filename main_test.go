@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -12,12 +13,13 @@ import (
 
 func execute(args string) string {
 	actual := new(bytes.Buffer)
-	RootCmd.SetOut(actual)
-	RootCmd.SetErr(actual)
+	rootCmd := RootCmd()
+	rootCmd.SetOut(actual)
+	rootCmd.SetErr(actual)
 	if args != "" {
-		RootCmd.SetArgs(strings.Split(args, " "))
+		rootCmd.SetArgs(strings.Split(args, " "))
 	}
-	err := RootCmd.Execute()
+	err := rootCmd.Execute()
 	if err != nil {
 		return err.Error()
 	}
@@ -25,7 +27,7 @@ func execute(args string) string {
 }
 
 func Test_Main_Fail(t *testing.T) {
-	actual := execute("blah")
+	actual := execute("--config blah")
 	expected := "error: blah file does not exist"
 	assert.Equal(t, expected, actual)
 }
@@ -41,13 +43,12 @@ func Test_Main_Pass(t *testing.T) {
 `
 	_, err = file.WriteString(config)
 
-	actual := execute(file.Name())
+	actual := execute(fmt.Sprintf("--config %s", file.Name()))
 	expected := "co"
 	assert.Contains(t, expected, actual)
 }
 
-func Test_Main_Search(t *testing.T) {
-	SearchString = "co"
+func Test_Main_Search_Pass(t *testing.T) {
 	file, err := os.CreateTemp("", "local-gitconfig")
 	if err != nil {
 		log.Fatal(err)
@@ -58,7 +59,7 @@ func Test_Main_Search(t *testing.T) {
 `
 	_, err = file.WriteString(config)
 
-	actual := execute(file.Name())
-	expected := "co"
+	actual := execute(fmt.Sprintf("--config %s -s checkout", file.Name()))
+	expected := "checkout"
 	assert.Contains(t, expected, actual)
 }
