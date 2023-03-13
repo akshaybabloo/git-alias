@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/fatih/color v1.15.0
-	github.com/jedib0t/go-pretty/v6 v6.4.5
+	github.com/jedib0t/go-pretty/v6 v6.4.6
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/ini.v1 v1.67.0
