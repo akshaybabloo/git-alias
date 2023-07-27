@@ -74,7 +74,7 @@ func RootCmd() *cobra.Command {
 				}
 			}
 			t.SetColumnConfigs([]table.ColumnConfig{
-				{Name: "Command", WidthMax: 80},
+				{Name: "Command", WidthMax: 60},
 			})
 			if Sort {
 				t.SortBy([]table.SortBy{{Name: "Alias", Mode: table.Asc}})
