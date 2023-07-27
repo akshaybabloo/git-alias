@@ -38,7 +38,9 @@ func RootCmd() *cobra.Command {
 				return fmt.Errorf("error: could not stat file")
 			}
 
-			config, err := ini.Load(ConfigPath)
+			config, err := ini.LoadSources(ini.LoadOptions{
+				SpaceBeforeInlineComment: true,
+			}, ConfigPath)
 			if err != nil {
 				return fmt.Errorf("error: could not load file")
 			}
@@ -50,7 +52,7 @@ func RootCmd() *cobra.Command {
 
 			t := table.NewWriter()
 			t.SetOutputMirror(os.Stdout)
-			t.AppendHeader(table.Row{"#", "Alias", "Command"})
+			t.AppendHeader(table.Row{"#", "Alias", "Command", "Description"})
 			if SearchString != "" {
 				c := color.New(color.BgCyan, color.Bold)
 				index := 1
@@ -58,7 +60,7 @@ func RootCmd() *cobra.Command {
 					if strings.Contains(key.Value(), SearchString) {
 						valueIndex := strings.Index(key.Value(), SearchString)
 						if valueIndex != -1 {
-							t.AppendRow(table.Row{index, key.Name(), key.Value()[0:valueIndex] + c.Sprint(key.Value()[valueIndex:valueIndex+len(SearchString)]) + key.Value()[valueIndex+len(SearchString):]})
+							t.AppendRow(table.Row{index, key.Name(), key.Value()[0:valueIndex] + c.Sprint(key.Value()[valueIndex:valueIndex+len(SearchString)]) + key.Value()[valueIndex+len(SearchString):], key.Comment})
 							t.AppendSeparator()
 							index++
 						}
@@ -67,7 +69,7 @@ func RootCmd() *cobra.Command {
 				t.SetTitle(fmt.Sprintf("Found %d aliases", t.Length()))
 			} else {
 				for i, key := range section.Keys() {
-					t.AppendRow(table.Row{i + 1, key.Name(), key.Value()})
+					t.AppendRow(table.Row{i + 1, key.Name(), key.Value(), key.Comment})
 					t.AppendSeparator()
 				}
 			}
