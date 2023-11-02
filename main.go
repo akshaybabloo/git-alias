@@ -14,7 +14,6 @@ import (
 
 var version = "dev"
 
-var SearchString string
 var Sort bool
 var ConfigPath string
 
@@ -53,14 +52,15 @@ func RootCmd() *cobra.Command {
 			t := table.NewWriter()
 			t.SetOutputMirror(os.Stdout)
 			t.AppendHeader(table.Row{"#", "Alias", "Command", "Description"})
-			if SearchString != "" {
+			if len(args) > 0 {
 				c := color.New(color.BgCyan, color.Bold)
 				index := 1
+				searchString := args[0]
 				for _, key := range section.Keys() {
-					if strings.Contains(key.Value(), SearchString) {
-						valueIndex := strings.Index(key.Value(), SearchString)
+					if strings.Contains(key.Value(), searchString) {
+						valueIndex := strings.Index(key.Value(), searchString)
 						if valueIndex != -1 {
-							t.AppendRow(table.Row{index, key.Name(), key.Value()[0:valueIndex] + c.Sprint(key.Value()[valueIndex:valueIndex+len(SearchString)]) + key.Value()[valueIndex+len(SearchString):], key.Comment})
+							t.AppendRow(table.Row{index, key.Name(), key.Value()[0:valueIndex] + c.Sprint(key.Value()[valueIndex:valueIndex+len(searchString)]) + key.Value()[valueIndex+len(searchString):], key.Comment})
 							t.AppendSeparator()
 							index++
 						}
@@ -86,7 +86,6 @@ func RootCmd() *cobra.Command {
 		},
 	}
 
-	command.PersistentFlags().StringVarP(&SearchString, "search", "s", "", "Search for aliases containing the given string")
 	command.PersistentFlags().StringVar(&ConfigPath, "config", "~/.gitconfig", "Path to git config file")
 	command.PersistentFlags().BoolVar(&Sort, "sort", false, "Sort aliases by alias name")
 

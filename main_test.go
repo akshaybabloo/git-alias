@@ -59,7 +59,7 @@ func Test_Main_Search_Pass(t *testing.T) {
 `
 	_, err = file.WriteString(config)
 
-	actual := execute(fmt.Sprintf("--config %s -s checkout", file.Name()))
+	actual := execute(fmt.Sprintf("--config %s checkout", file.Name()))
 	expected := "checkout"
 	assert.Contains(t, expected, actual)
 }
