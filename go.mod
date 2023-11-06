@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/fatih/color v1.15.0
 	github.com/jedib0t/go-pretty/v6 v6.4.9
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	gopkg.in/ini.v1 v1.67.0
 )
