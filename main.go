@@ -57,10 +57,16 @@ func RootCmd() *cobra.Command {
 				index := 1
 				searchString := args[0]
 				for _, key := range section.Keys() {
-					if strings.Contains(key.Value(), searchString) {
+					if strings.Contains(key.Value(), searchString) || strings.Contains(key.Name(), searchString) {
 						valueIndex := strings.Index(key.Value(), searchString)
 						if valueIndex != -1 {
 							t.AppendRow(table.Row{index, key.Name(), key.Value()[0:valueIndex] + c.Sprint(key.Value()[valueIndex:valueIndex+len(searchString)]) + key.Value()[valueIndex+len(searchString):], key.Comment})
+							t.AppendSeparator()
+							index++
+						}
+						keyIndex := strings.Index(key.Name(), searchString)
+						if keyIndex != -1 {
+							t.AppendRow(table.Row{index, key.Name()[0:keyIndex] + c.Sprint(key.Name()[keyIndex:keyIndex+len(searchString)]) + key.Name()[keyIndex+len(searchString):], key.Value(), key.Comment})
 							t.AppendSeparator()
 							index++
 						}
