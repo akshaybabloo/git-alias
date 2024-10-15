@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/fatih/color v1.17.0
-	github.com/jedib0t/go-pretty/v6 v6.5.9
+	github.com/jedib0t/go-pretty/v6 v6.6.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/ini.v1 v1.67.0
